@@ -24,12 +24,12 @@ const ViewTests = () => {
 
   useEffect(() => {
     const dummyTests = [
-      { id: 1, testName: 'Blood Test', testPrice: 1200 },
-      { id: 2, testName: 'Urine Analysis', testPrice: 800 },
-      { id: 3, testName: 'Diabetes Test', testPrice: 1500 },
+      { id: 1, testName: 'Blood Test', rate: 1200 },
+      { id: 2, testName: 'Urine Analysis', rate: 800 },
+      { id: 3, testName: 'Diabetes Test', rate: 1500 },
     ];
 
-    fetchDataWithFallback('/api/tests', dummyTests).then(setTests);
+    fetchDataWithFallback('https://pahology-lab-production.up.railway.app/api/tests', dummyTests).then(setTests);
   }, []);
 
   const filteredTests = tests.filter(test =>
@@ -66,9 +66,9 @@ const ViewTests = () => {
             <tbody>
               {filteredTests.map(test => (
                 <tr key={test.id} className="hover:bg-gray-50">
-                  <td className="p-4 border">{test.id}</td>
+                  <td className="p-4 border">{test.testId}</td>
                   <td className="p-4 border">{test.testName}</td>
-                  <td className="p-4 border">₹{test.testPrice}</td>
+                  <td className="p-4 border">₹{test.rate}</td>
                   <td className="p-4 border">
                     <button className="mr-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
                       Edit
@@ -100,12 +100,11 @@ const ViewSubTests = () => {
       { id: 3, testName: 'Urine Analysis', subtestName: 'pH Level', units: 'pH', value: '6.0', range: '4.5-8.0' },
     ];
 
-    fetchDataWithFallback('/api/subtests', dummySubTests).then(setSubTests);
+    fetchDataWithFallback('https://pahology-lab-production.up.railway.app/api/subtest', dummySubTests).then(setSubTests);
   }, []);
 
   const filteredSubTests = subTests.filter(subTest =>
-    (filter === 'all' || subTest.testName === filter) &&
-    subTest.subtestName.toLowerCase().includes(searchTerm.toLowerCase())
+    (filter === 'all' || subTest.testName === filter)
   );
 
   const uniqueTests = [...new Set(subTests.map(st => st.testName))];
@@ -144,7 +143,7 @@ const ViewSubTests = () => {
             <thead>
               <tr className="bg-gray-100">
                 <th className="p-4 text-left border">ID</th>
-                <th className="p-4 text-left border">Test Name</th>
+                <th className="p-4 text-left border">Test Name(id)</th>
                 <th className="p-4 text-left border">Subtest Name</th>
                 <th className="p-4 text-left border">Units</th>
                 <th className="p-4 text-left border">Value</th>
@@ -155,17 +154,19 @@ const ViewSubTests = () => {
             <tbody>
               {filteredSubTests.map(subTest => (
                 <tr key={subTest.id} className="hover:bg-gray-50">
-                  <td className="p-4 border">{subTest.id}</td>
-                  <td className="p-4 border">{subTest.testName}</td>
-                  <td className="p-4 border">{subTest.subtestName}</td>
+                  <td className="p-4 border">{subTest.subTestId}</td>
+                  <td className="p-4 border">{subTest.testId}</td>
+                  <td className="p-4 border">{subTest.subTestName}</td>
                   <td className="p-4 border">{subTest.units}</td>
                   <td className="p-4 border">{subTest.value}</td>
-                  <td className="p-4 border">{subTest.range}</td>
+                  <td className="p-4 border">{subTest.rangeValue}</td>
                   <td className="p-4 border">
                     <button className="mr-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
                       Edit
                     </button>
-                    <button className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">
+                    <button 
+                    onClick={() => (window.location.href = `https://pahology-lab-production.up.railway.app/delete/${subTest.subTestId}`)} 
+                    className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">
                       Delete
                     </button>
                   </td>
@@ -208,14 +209,25 @@ const ViewPatients = () => {
       },
     ];
 
-    fetchDataWithFallback('/api/patients', dummyPatients).then(setPatients);
+    fetchDataWithFallback('https://pahology-lab-production.up.railway.app/api/patients', dummyPatients).then(setPatients);
   }, []);
 
-  const filteredPatients = patients.filter(patient =>
-    patient.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    patient.srName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    patient.mobile.includes(searchTerm)
-  );
+  // const filteredPatients = patients.filter(patient =>
+  //   patient.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //   patient.srName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //   patient.mobile.includes(searchTerm)
+  // );
+  const filteredPatients = patients.filter(patient => {
+    const patientName = patient.patientName || ''; // Default to an empty string if undefined
+    const srName = patient.srName || ''; // Default to an empty string if undefined
+    const mobile = patient.mobile || ''; // Default to an empty string if undefined
+  
+    return (
+      patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      srName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      mobile.includes(searchTerm)
+    );
+  });
 
   return (
     <div className="min-h-screen bg-blue-300 p-8
@@ -253,9 +265,9 @@ const ViewPatients = () => {
             <tbody>
               {filteredPatients.map(patient => (
                 <tr key={patient.id} className="hover:bg-gray-50">
-                  <td className="p-4 border">{patient.id}</td>
+                  <td className="p-4 border">{patient.patientId}</td>
                   <td className="p-4 border">{patient.srName}</td>
-                  <td className="p-4 border">{patient.patientName}</td>
+                  <td className="p-4 border">{patient.name}</td>
                   <td className="p-4 border">{patient.age}</td>
                   <td className="p-4 border">{patient.gender}</td>
                   <td className="p-4 border">{patient.mobile}</td>
@@ -267,6 +279,11 @@ const ViewPatients = () => {
                     </button>
                     <button className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">
                       Delete
+                    </button>
+                    <button 
+                    onClick={() => (window.location.href = `https://pahology-lab-production.up.railway.app/generate-cbc-pdf/${patient.patientId}`)} 
+                    className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-blue-600">
+                      Print
                     </button>
                   </td>
                 </tr>

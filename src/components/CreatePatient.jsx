@@ -4,7 +4,7 @@ import { Card } from './Card';
 const CreatePatient = () => {
   const [formData, setFormData] = React.useState({
     srName: '',
-    patientName: '',
+    name: '',
     fatherName: '',
     age: '',
     gender: '',
@@ -20,7 +20,7 @@ const CreatePatient = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch('https://your-api-endpoint.com/patients', {
+      const response = await fetch('https://pahology-lab-production.up.railway.app/api/patients', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -4,14 +4,14 @@ import { Card } from './Card';
 const CreateTest = () => {
   const [formData, setFormData] = React.useState({
     testName: '',
-    testPrice: '',
+    rate: '',
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch('https://your-api-endpoint.com/tests', {
+      const response = await fetch('https://pahology-lab-production.up.railway.app/api/tests', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -51,8 +51,8 @@ const CreateTest = () => {
               type="number"
               placeholder="Test Price"
               className="w-full p-2 border border-gray-300 rounded"
-              value={formData.testPrice}
-              onChange={(e) => setFormData({ ...formData, testPrice: e.target.value })}
+              value={formData.rate}
+              onChange={(e) => setFormData({ ...formData, rate: e.target.value })}
             />
           </div>
           <button
